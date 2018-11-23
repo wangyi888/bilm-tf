@@ -2,6 +2,7 @@
 import argparse
 
 import numpy as np
+import os
 
 from bilm.training import train, load_options_latest_checkpoint, load_vocab
 from bilm.data import BidirectionalLMDataset
@@ -9,31 +10,33 @@ from bilm.data import BidirectionalLMDataset
 
 def main(args):
     # load the vocab
-    vocab = load_vocab(args.vocab_file, 50)
+    vocab = load_vocab(args.vocab_file, None)
 
     # define the options
     batch_size = 128  # batch size for each GPU
     n_gpus = 3
+    os.environ['CUDA_VISIBLE_DEVICES'] = 1,2,3
 
     # number of tokens in training data (this for 1B Word Benchmark)
-    n_train_tokens = 768648884
+    n_train_tokens = 238046873
+
 
     options = {
      'bidirectional': True,
-
-     'char_cnn': {'activation': 'relu',
-      'embedding': {'dim': 16},
-      'filters': [[1, 32],
-       [2, 32],
-       [3, 64],
-       [4, 128],
-       [5, 256],
-       [6, 512],
-       [7, 1024]],
-      'max_characters_per_token': 50,
-      'n_characters': 261,
-      'n_highway': 2},
-    
+     #
+     # 'char_cnn': {'activation': 'relu',
+     #  'embedding': {'dim': 16},
+     #  'filters': [[1, 32],
+     #   [2, 32],
+     #   [3, 64],
+     #   [4, 128],
+     #   [5, 256],
+     #   [6, 512],
+     #   [7, 1024]],
+     #  'max_characters_per_token': 50,
+     #  'n_characters': 261,
+     #  'n_highway': 2},
+     #
      'dropout': 0.1,
     
      'lstm': {

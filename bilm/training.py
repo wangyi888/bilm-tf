@@ -6,9 +6,11 @@ import os
 import time
 import json
 import re
+import h5py
 
 import tensorflow as tf
 import numpy as np
+import gensim
 
 from tensorflow.python.ops.init_ops import glorot_uniform_initializer
 
@@ -85,9 +87,16 @@ class LanguageModel(object):
                                name='token_ids')
         # the word embeddings
         with tf.device("/cpu:0"):
+            embedding_addr = '../w2v_xingshi.txt'
+            w2v = gensim.models.KeyedVectors.load_word2vec_format(embedding_addr)
+            tmp_embed = np.zeros((n_tokens_vocab,projection_dim),dtype=DTYPE)
+            words = w2v.vocab
+            for i,word in enumerate(words):
+                tmp_embed[i+3][:] = w2v[word]
             self.embedding_weights = tf.get_variable(
                 "embedding", [n_tokens_vocab, projection_dim],
-                dtype=DTYPE,
+                dtype=DTYPE,initializer=tf.constant_initializer(tmp_embed),
+                trainable=True
             )
             self.embedding = tf.nn.embedding_lookup(self.embedding_weights,
                                                 self.token_ids)
@@ -893,6 +902,9 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
 
             if batch_no == n_batches_total:
                 # done training!
+                embed = sess.run(model.embedding_weights)
+                with h5py.File('vocab_embedding.hdf5','w') as fout:
+                     fout.create_dataset('embedding',embed.shape,dtype='float32',data=embed)
                 break
 
 
