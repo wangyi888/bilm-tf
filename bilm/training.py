@@ -87,15 +87,15 @@ class LanguageModel(object):
                                name='token_ids')
         # the word embeddings
         with tf.device("/cpu:0"):
-            embedding_addr = '../w2v_xingshi.txt'
-            w2v = gensim.models.KeyedVectors.load_word2vec_format(embedding_addr)
-            tmp_embed = np.zeros((n_tokens_vocab,projection_dim),dtype=DTYPE)
-            words = w2v.vocab
-            for i,word in enumerate(words):
-                tmp_embed[i+3][:] = w2v[word]
+            #embedding_addr = '/home/nlp/pySpace/bilm-tf/w2v_xingshi.txt'
+            #w2v = gensim.models.KeyedVectors.load_word2vec_format(embedding_addr)
+            #tmp_embed = np.zeros((n_tokens_vocab,projection_dim),dtype=DTYPE)
+            #words = w2v.vocab
+            #for i,word in enumerate(words):
+            #    tmp_embed[i+3][:] = w2v[word]
             self.embedding_weights = tf.get_variable(
                 "embedding", [n_tokens_vocab, projection_dim],
-                dtype=DTYPE,initializer=tf.constant_initializer(tmp_embed),
+                dtype=DTYPE,
                 trainable=True
             )
             self.embedding = tf.nn.embedding_lookup(self.embedding_weights,
