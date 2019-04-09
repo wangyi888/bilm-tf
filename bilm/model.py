@@ -200,6 +200,7 @@ def _pretrained_initializer(varname, weight_file, embedding_weight_file=None):
                 root + '/LSTMCell/W_P_0'
 
     # convert the graph name to that in the checkpoint
+    print(varname)
     varname_in_file = varname[5:]
     if varname_in_file.startswith('RNN'):
         varname_in_file = weight_name_map[varname_in_file]
@@ -227,6 +228,7 @@ def _pretrained_initializer(varname, weight_file, embedding_weight_file=None):
                 )
                 weights[1:, :] = char_embed_weights
             else:
+                print('老杜',varname)
                 weights = fin[varname_in_file][...]
 
     # Tensorflow initializers are callables that accept a shape parameter

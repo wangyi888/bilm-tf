@@ -22,7 +22,8 @@ class MyEncoder(json.JSONEncoder):
 
 class EmbeddingHandler(tornado.web.RequestHandler):
     def post(self, *args, **kwargs):
-        raw = json.loads(self.request.body)
+        print(self.request.body)
+        raw = json.loads(self.request.body.decode('utf-8'),encoding='utf-8')
         query = raw['query']
         embedding = elmo.get_embedding(query)
         result = {'embedding':embedding}
@@ -80,8 +81,8 @@ class Embedding:
             return elmo_context_input_
 
 if __name__ == '__main__':
-    define("port", default=8080, help="run on the given port", type=int)
-    accout = 'abc'
+    define("port", default=9094, help="run on the given port", type=int)
+    accout = 'nlp'
     vocab_file = '/home/' + accout + '/pySpace/bilm-tf/vocab_bilm.txt'
     options_file = '/home/' + accout + '/pySpace/bilm-tf/output/options.json'
     weight_file = '/home/' + accout + '/pySpace/bilm-tf/output/weights.hdf5'

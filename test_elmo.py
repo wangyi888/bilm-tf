@@ -12,10 +12,10 @@ tokenized_context = [
 #     ['这', '是', '什么'],
 # ]
 
-vocab_file='/home/abc/pySpace/bilm-tf/vocab_bilm.txt'
-options_file='/home/abc/pySpace/bilm-tf/output/options.json'
-weight_file='/home/abc/pySpace/bilm-tf/output/weights.hdf5'
-token_embedding_file='/home/abc/pySpace/bilm-tf/vocab_embedding.hdf5'
+vocab_file='/home/nlp/pySpace/bilm-tf/vocab_bilm.txt'
+options_file='/home/nlp/pySpace/bilm-tf/output/options.json'
+weight_file='/home/nlp/pySpace/bilm-tf/output/weights.hdf5'
+token_embedding_file='/home/nlp/pySpace/bilm-tf/vocab_embedding.hdf5'
 
 ## Now we can do inference.
 # Create a TokenBatcher to map text to token ids.
@@ -53,8 +53,9 @@ elmo_context_output = weight_layers(
 #         'output', question_embeddings_op, l2_coef=0.0
 #     )
 
-
-with tf.Session() as sess:
+tf_config = tf.ConfigProto()
+tf_config.gpu_options.allow_growth = True
+with tf.Session(config=tf_config) as sess:
     # It is necessary to initialize variables once before running inference.
     sess.run(tf.global_variables_initializer())
 
@@ -68,7 +69,11 @@ with tf.Session() as sess:
         feed_dict={context_token_ids: context_ids}
     )
 
-print(elmo_context_input_)
+print(elmo_context_input_,'sentence_num:',len(elmo_context_input_),'word_num:',len(elmo_context_input_[0]),'embedding_dim:',len(elmo_context_input_[0][0]))
 with open('test_result.txt','w',encoding='utf-8') as out:
-    out.write(elmo_context_input_)
-    out.flush()
+    elmo_context_input_ = elmo_context_input_[0]
+    for i in range(len(elmo_context_input_)):
+        for j in range(len(elmo_context_input_[i])):
+            out.write(str(elmo_context_input_[i][j])+',')
+            out.flush()
+
